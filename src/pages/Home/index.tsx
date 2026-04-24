@@ -2,21 +2,25 @@ import { useEffect, useState } from "react"
 import { type Tarefa } from "../../types/Tarefa"
 import { api } from "../../services/api"
 
-export function TarefaComponente(){
+export function TarefaComponente() {
     const [tarefas, setTarefas] = useState<Tarefa[]>([])
 
-    //resposta da requisição
+    // resposta da requisição
     useEffect(() => {
-        async function getTarefas() : Promise<Tarefa[]>{
-            return (await api.get("/tarefas")).data
+        async function getTarefas() {
+            try {
+                const response = await api.get<Tarefa[]>("/tarefas")
+                setTarefas(response.data)
+            } catch (error) {
+                console.error("Erro ao buscar tarefas:", error)
+            }
         }
-        getTarefas().then(setTarefas)
-        //guardo a resposta na tarefa
 
+        getTarefas()
+        // guardo a resposta na tarefa
     }, [])
-    
-    
-    return(
+
+    return (
         <div>
             {tarefas.map(item => (
                 <div key={item.id}>{item.title}</div>
@@ -25,12 +29,11 @@ export function TarefaComponente(){
     )
 }
 
-export function Home(){
-    return(
+export function Home() {
+    return (
         <div>
             <h1>Bem vindos a Home</h1>
-            <TarefaComponente/>
+            <TarefaComponente />
         </div>
-
     )
 }
